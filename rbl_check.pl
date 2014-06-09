@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Net::DNS;
-use Data::Validate::IP qw(is_ipv4 is_ipv6);
+use Data::Validate::IP ('is_ipv4');
 
 # Way more lists out there, but I'll add them later.
 my %list = (
