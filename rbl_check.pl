@@ -3,8 +3,9 @@
 use strict;
 use warnings;
 
+# These two aren't core, so you need to get them installed before this will work.
 use Net::DNS;
-use Data::Validate::IP ('is_ipv4');
+use Data::Validate::IP;
 
 # Way more lists out there, but I'll add them later.
 my %list = (
