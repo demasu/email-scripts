@@ -4,8 +4,7 @@ use strict;
 use warnings;
 
 # These two aren't core, so you need to get them installed before this will work.
-use Net::DNS;
-use Data::Validate::IP;
+use Carp qw( croak );
 
 # Way more lists out there, but I'll add them later.
 my %list = (
@@ -32,21 +31,19 @@ my %list = (
 # Grab the IPv4 address from user
 print "Give me an IPv4 Address, please: ";
 chomp( my $ip = <STDIN>);
-my $v = Data::Validate::IP->new();
 
-die "not an IPv4 ip" unless ($v->is_ipv4($ip));
+if ( $ip !~ /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/ ) {
+	croak "$ip is not a valid IP address!";
+}
 
 foreach my $line (keys %list) {
     my $host = "$ip.$line";
-    my $res = Net::DNS::Resolver->new;
-    my $query = $res->search("$host");
+    my $ret = qx/dig +short $host/;
 
-    if($query) {
-        foreach my $rr ($query->answer) {
-            next unless $rr->type eq "A";
-        }
-        print "List: $line - $ARGV[0] is listed\n";
-    } else {
-        print "List: $line - Nope\n";
-    }
+	if ( $ret ) {
+		print "List: $line - $ip is listed\n";
+	}
+	else {
+		print "List: $line - Nope\n";
+	}
 }
